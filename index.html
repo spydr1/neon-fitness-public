@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>약관 및 정책</title>
+    <!-- 마크다운 변환 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+        nav { margin-bottom: 30px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; background: #007bff; color: white; border-radius: 5px; margin: 0 5px; transition: 0.3s; }
+        button:hover { background: #0056b3; }
+        button.active { background: #333; }
+        #content { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); min-height: 500px; }
+        /* 마크다운 스타일링 */
+        #content h1 { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        #content blockquote { border-left: 4px solid #ddd; padding-left: 15px; color: #666; }
+        #content code { background: #eee; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <button onclick="loadMD('개인정보 처리방침.MD', this)" id="default-btn">개인정보 처리방침</button>
+    <button onclick="loadMD('이용약관.MD', this)">이용약관</button>
+</nav>
+
+<div id="content">
+    <p style="color: #999; text-align: center;">파일을 불러오는 중입니다...</p>
+</div>
+
+<script>
+    async function loadMD(fileName, element) {
+        const contentDiv = document.getElementById('content');
+        
+        // 버튼 활성화 스타일 변경
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        if(element) element.classList.add('active');
+
+        try {
+            // .MD 파일 가져오기
+            const response = await fetch(fileName);
+            if (!response.ok) throw new Error('파일을 찾을 수 없습니다.');
+            
+            const markdown = await response.text();
+            
+            // 마크다운을 HTML로 변환하여 삽입
+            contentDiv.innerHTML = marked.parse(markdown);
+        } catch (error) {
+            contentDiv.innerHTML = `<p style="color:red; text-align:center;">에러: ${error.message}<br>파일 이름이 정확한지, 서버에 업로드되었는지 확인해주세요.</p>`;
+        }
+    }
+
+    // 페이지 접속 시 첫 번째 파일 자동 로드
+    window.onload = () => {
+        document.getElementById('default-btn').click();
+    };
+</script>
+
+</body>
+</html>
